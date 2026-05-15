@@ -7,10 +7,33 @@ package calculadora;
  * sendo utilizado em funcionalidades como cálculo de orçamento mensal,
  * divisão de despesas e projeção de economias.</p>
  *
+ * <p><b>Versão refatorada:</b> métodos extraídos, nomes melhorados,
+ * estruturas condicionais simplificadas e organização lógica aprimorada.</p>
+ *
  * @author Desenvolvedor Junior - FinançApp
- * @version 1.0
+ * @version 2.0
  */
 public class Calculadora {
+
+    // =========================================================
+    // CONSTANTES — Símbolos das operações suportadas
+    // =========================================================
+
+    /** Símbolo da operação de soma. */
+    private static final String OP_SOMA = "+";
+
+    /** Símbolo da operação de subtração. */
+    private static final String OP_SUBTRACAO = "-";
+
+    /** Símbolo da operação de multiplicação. */
+    private static final String OP_MULTIPLICACAO = "*";
+
+    /** Símbolo da operação de divisão. */
+    private static final String OP_DIVISAO = "/";
+
+    // =========================================================
+    // MÉTODO PRINCIPAL
+    // =========================================================
 
     /**
      * Realiza uma operação matemática básica entre dois números inteiros.
@@ -30,27 +53,27 @@ public class Calculadora {
      *         ou {@code Double.NaN} em caso de operação inválida ou divisão por zero
      */
     public double calc(int a, int b, String op) {
-        // Validação: verifica se a operação fornecida é nula ou vazia
-        if (op == null || op.trim().isEmpty()) {
-            System.out.println("Erro: operação inválida. Use +, -, * ou /.");
+        if (operacaoEhInvalida(op)) {
+            exibirErroOperacaoInvalida(op);
             return Double.NaN;
         }
 
-        // Seleciona e executa a operação correspondente
-        switch (op.trim()) {
-            case "+":
-                return somar(a, b);
-            case "-":
-                return subtrair(a, b);
-            case "*":
-                return multiplicar(a, b);
-            case "/":
-                return dividir(a, b);
+        String operacaoNormalizada = op.trim();
+
+        switch (operacaoNormalizada) {
+            case OP_SOMA:           return somar(a, b);
+            case OP_SUBTRACAO:      return subtrair(a, b);
+            case OP_MULTIPLICACAO:  return multiplicar(a, b);
+            case OP_DIVISAO:        return dividir(a, b);
             default:
-                System.out.println("Erro: operação '" + op + "' não reconhecida. Use +, -, * ou /.");
+                exibirErroOperacaoNaoReconhecida(operacaoNormalizada);
                 return Double.NaN;
         }
     }
+
+    // =========================================================
+    // OPERAÇÕES MATEMÁTICAS
+    // =========================================================
 
     /**
      * Realiza a soma de dois valores inteiros.
@@ -97,13 +120,69 @@ public class Calculadora {
      *         ou {@code Double.NaN} se {@code b} for zero
      */
     private double dividir(int a, int b) {
-        // Proteção contra divisão por zero
-        if (b == 0) {
-            System.out.println("Erro: divisão por zero não é permitida.");
+        if (divisorEhZero(b)) {
+            exibirErroDivisaoPorZero();
             return Double.NaN;
         }
         return (double) a / b;
     }
+
+    // =========================================================
+    // VALIDAÇÕES
+    // =========================================================
+
+    /**
+     * Verifica se a operação fornecida é inválida (nula ou vazia).
+     *
+     * @param op Operação a ser verificada
+     * @return {@code true} se a operação for nula ou vazia; {@code false} caso contrário
+     */
+    private boolean operacaoEhInvalida(String op) {
+        return op == null || op.trim().isEmpty();
+    }
+
+    /**
+     * Verifica se o divisor é zero.
+     *
+     * @param divisor O valor do divisor
+     * @return {@code true} se o divisor for zero; {@code false} caso contrário
+     */
+    private boolean divisorEhZero(int divisor) {
+        return divisor == 0;
+    }
+
+    // =========================================================
+    // MENSAGENS DE ERRO
+    // =========================================================
+
+    /**
+     * Exibe mensagem de erro para operação nula ou vazia.
+     *
+     * @param op Operação inválida informada
+     */
+    private void exibirErroOperacaoInvalida(String op) {
+        System.out.println("Erro: operação inválida. Use +, -, * ou /.");
+    }
+
+    /**
+     * Exibe mensagem de erro para operação não reconhecida.
+     *
+     * @param op Operação não reconhecida informada
+     */
+    private void exibirErroOperacaoNaoReconhecida(String op) {
+        System.out.println("Erro: operação '" + op + "' não reconhecida. Use +, -, * ou /.");
+    }
+
+    /**
+     * Exibe mensagem de erro para tentativa de divisão por zero.
+     */
+    private void exibirErroDivisaoPorZero() {
+        System.out.println("Erro: divisão por zero não é permitida.");
+    }
+
+    // =========================================================
+    // DEMONSTRAÇÃO
+    // =========================================================
 
     /**
      * Método principal para demonstração manual da calculadora.
@@ -111,15 +190,16 @@ public class Calculadora {
      * @param args Argumentos de linha de comando (não utilizados)
      */
     public static void main(String[] args) {
-        Calculadora calc = new Calculadora();
+        Calculadora calculadora = new Calculadora();
 
-        System.out.println("=== FinançApp — Calculadora ===\n");
+        System.out.println("=== FinançApp — Calculadora (Refatorada) ===\n");
 
-        System.out.println("10 + 5 = " + calc.calc(10, 5, "+"));
-        System.out.println("10 - 5 = " + calc.calc(10, 5, "-"));
-        System.out.println("10 * 5 = " + calc.calc(10, 5, "*"));
-        System.out.println("10 / 5 = " + calc.calc(10, 5, "/"));
-        System.out.println("10 / 0 = " + calc.calc(10, 0, "/"));
-        System.out.println("10 % 5 = " + calc.calc(10, 5, "%"));
+        System.out.println("10 + 5  = " + calculadora.calc(10, 5, "+"));
+        System.out.println("10 - 5  = " + calculadora.calc(10, 5, "-"));
+        System.out.println("10 * 5  = " + calculadora.calc(10, 5, "*"));
+        System.out.println("10 / 5  = " + calculadora.calc(10, 5, "/"));
+        System.out.println("10 / 0  = " + calculadora.calc(10, 0, "/"));
+        System.out.println("10 % 5  = " + calculadora.calc(10, 5, "%"));
+        System.out.println("null    = " + calculadora.calc(10, 5, null));
     }
 }
